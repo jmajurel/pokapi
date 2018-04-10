@@ -1,0 +1,19 @@
+{
+  "name": "todos_api",
+  "version": "1.0.0",
+  "description": "this is a pratice api project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "api",
+    "pratice"
+  ],
+  "author": "JFM",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "mongoose": "^5.0.14"
+  }
+}
