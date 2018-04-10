@@ -13,7 +13,9 @@
   "author": "JFM",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.3",
-    "mongoose": "^5.0.14"
+    "mongoose": "^5.0.14",
+    "request": "^2.85.0"
   }
 }
