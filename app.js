@@ -23,8 +23,13 @@ app.get('/api/pokemons', function(req, res){
 });
 
 app.post('/api/pokemons', function(req, res){
-  var newPokemon = new Pokemon(req.body.pokemon);
-  newPokemon.save(function(err){
+  console.log("got a post request");
+  var newPokemon = {
+    name: req.body.name,
+    type: req.body.type,
+    age: req.body.age
+  };
+  Pokemon.create(newPokemon, function(err){
     if(err){
       console.log(err);
     }
@@ -50,10 +55,14 @@ app.put('/api/pokemons/:id', function(req, res){
 });
 
 app.delete('/api/pokemons/:id', function(req, res){
-
+  Pokemon.findByIdAndRemove(req.params.id, function(err){
+    if(err){
+      console.log(err);
+    }
+  });
 });
 
 app.listen('3000', function(){
-  console.log("server running on port 9000");
+  console.log("server running on port 3000");
 });
 
