@@ -1,8 +1,8 @@
-var express = require('express'),
-   mongoose = require('mongoose'),
-   bodyParser = require('body-parser'),
-   Pokemon     = require('./pokemon.js'),
-   app = express();
+var express    = require('express'),
+   mongoose    = require('mongoose'),
+   bodyParser  = require('body-parser'),
+   Pokemon     = require('./models/pokemon.js'),
+   app         = express();
 
 app.use(bodyParser.urlencoded({ extended: false}));
 
@@ -13,6 +13,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/api/pokemons', function(req, res){
+
   Pokemon.find({}, function(err, pokemons){
     if(err){
       console.log(err);
@@ -22,16 +23,37 @@ app.get('/api/pokemons', function(req, res){
   });
 });
 
-app.post('/api/pokemons', function(req, res){
-  console.log("got a post request");
+function checkExistingEntry(req, res, next){
+  Pokemon.findOne({name: req.body.name}, function(err, data){
+    if(!data){
+      next(); 
+    };
+  }); 
+}
+
+app.post('/api/pokemons', checkExistingEntry, function(req, res){
+
   var newPokemon = {
     name: req.body.name,
+    picture: req.body.picture,
     type: req.body.type,
-    age: req.body.age
+    ability: req.body.ability,
+    weakness: req.body.weakness.split(' '),
+    height: req.body.height
   };
-  Pokemon.create(newPokemon, function(err){
+
+  Pokemon.findOne({name: req.body.evolution}, function(err, foundPokemon){
     if(err){
       console.log(err);
+    } else if(foundPokemon){
+      newPokemon.evolution = foundPokemon.id;
+    } else {
+      Pokemon.create(newPokemon, function(err){
+	if(err){
+	  console.log(err);
+	}
+      });
+      if(req.body.evolution) console.log(`Pokemon ${req.body.evolution} is not available in the database`);
     }
   });
 });
@@ -47,7 +69,7 @@ app.get('/api/pokemons/:id', function(req, res){
 });
 
 app.put('/api/pokemons/:id', function(req, res){
-  Pokemon.findByIdAndUpdate(req.params.id, req.body.pokemon, function(err){
+  Pokemon.findByIdAndUpdate(req.params.id, req.body, function(err){
     if(err){
       console.log(err);
     }
