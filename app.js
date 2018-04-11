@@ -1,7 +1,8 @@
 var express    = require('express'),
    mongoose    = require('mongoose'),
    bodyParser  = require('body-parser'),
-   Pokemon     = require('./models/pokemon.js'),
+   Pokemon     = require('./models/pokemon'),
+   dbverification = require('./middlewares/dbverification'),
    app         = express();
 
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -23,37 +24,35 @@ app.get('/api/pokemons', function(req, res){
   });
 });
 
-function checkExistingEntry(req, res, next){
-  Pokemon.findOne({name: req.body.name}, function(err, data){
-    if(!data){
-      next(); 
-    };
-  }); 
-}
 
-app.post('/api/pokemons', checkExistingEntry, function(req, res){
+app.post('/api/pokemons', dbverification.checkExistingEntry, function(req, res){
 
   var newPokemon = {
-    name: req.body.name,
+    name: req.body.name.toLowerCase(),
     picture: req.body.picture,
     type: req.body.type,
     ability: req.body.ability,
     weakness: req.body.weakness.split(' '),
-    height: req.body.height
+    height: req.body.height,
+    evolution: {
+      name: req.body.evolution
+    }
   };
 
-  Pokemon.findOne({name: req.body.evolution}, function(err, foundPokemon){
+  Pokemon.findOne({name: req.body.evolution.toLowerCase()}, function(err, foundPokemon){
     if(err){
       console.log(err);
-    } else if(foundPokemon){
-      newPokemon.evolution = foundPokemon.id;
     } else {
+      if(foundPokemon) {
+        newPokemon.evolution.id = foundPokemon._id
+      } else {
+        console.log(`Pokemon ${newPokemon.evolution.name} is not available in the database`);
+      }
       Pokemon.create(newPokemon, function(err){
 	if(err){
 	  console.log(err);
 	}
       });
-      if(req.body.evolution) console.log(`Pokemon ${req.body.evolution} is not available in the database`);
     }
   });
 });

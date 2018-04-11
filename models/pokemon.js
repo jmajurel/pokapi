@@ -7,7 +7,10 @@ var pokemonSchema = mongoose.Schema({
   ability: String,
   weakness: [String],
   height: Number,
-  evolution: {type: mongoose.Schema.Types.ObjectId, ref: 'Pokemon'}
+  evolution: {
+    id : {type: mongoose.Schema.Types.ObjectId, ref: 'Pokemon'},
+    name: String
+  }
 });
 
 module.exports = mongoose.model('Pokemon', pokemonSchema);
