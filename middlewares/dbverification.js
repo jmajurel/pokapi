@@ -1,7 +1,7 @@
-
 var Pokemon = require('../models/pokemon');
+var middlewarePackage = {}
 
-function checkExistingEntry(req, res, next){
+middlewarePackage.checkExistingEntry = function (req, res, next){
   Pokemon.findOne({name: req.body.name.toLowerCase()}, function(err, data){
     if(err){
       console.log(err);
@@ -11,4 +11,4 @@ function checkExistingEntry(req, res, next){
   }); 
 }
 
-module.exports = checkExistingEntry;
+module.exports =  middlewarePackage; 
