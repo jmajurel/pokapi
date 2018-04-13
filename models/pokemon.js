@@ -1,9 +1,18 @@
 var mongoose = require('mongoose');
 
 var pokemonSchema = mongoose.Schema({
-  name: String,
-  picture: String,
-  type: String,
+  name: {
+    type: String,
+    required: true
+  },
+  picture: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    required: true
+  },
   ability: String,
   weakness: [String],
   height: Number,

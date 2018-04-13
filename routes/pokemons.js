@@ -1,8 +1,9 @@
 var dbverification = require('../middlewares/dbverification'),
     express        = require('express'),
-    Pokemon        = require('../models')
+    models        = require('../models')
 
- var router = express.Router();
+var Pokemon = models.pokemon;
+var router = express.Router();
 
 //INDEX ROUTE
 router.get('/', function(req, res){
@@ -12,19 +13,12 @@ router.get('/', function(req, res){
 });
 
 //CREATE ROUTE
-router.post('/', dbverification.checkExistingEntry, function(req, res){
+router.post('/', dbverification.checkExistingPokemon, function(req, res){
 
-  var newPokemon = {
-    name: req.body.name.toLowerCase(),
-    picture: req.body.picture,
-    type: req.body.type,
-    ability: req.body.ability,
-    weakness: req.body.weakness.split(' '),
-    height: req.body.height,
-    evolution: {
-      name: req.body.evolution
-    }
-  };
+  if(req.body.weakness && req.body.weakness.length > 0) {
+    newPokemon.weakness = req.body.weakness.split(' ')
+  }
+  if(!req.body.evolution) req.body.evolution = "";
 
   Pokemon.findOne({name: req.body.evolution.toLowerCase()})
       .then(foundPokemon => {
@@ -34,29 +28,38 @@ router.post('/', dbverification.checkExistingEntry, function(req, res){
 	   console.log(`Pokemon ${newPokemon.evolution.name} is not available in the database`);
 	 }
       })
-      .then(Pokemon.create(newPokemon)
-	.catch(err => console.log(err))
-      )
-      .catch(err => console.log(err));
+      .then(Pokemon.create({
+	  name: req.body.name.toLowerCase(),
+	  picture: req.body.picture,
+	  type: req.body.type,
+	  ability: req.body.ability,
+	  height: req.body.height,
+	  evolution: {
+	    name: req.body.evolution
+	  }
+	}).catch(err => res.json(err)))
+      .then((newPokemon)=> res.status(201).json(newPokemon))
+      .catch(err => res.json(err));
 });
 
 //SHOW ROUTE
 router.get('/:id', function(req, res){
   Pokemon.findById(req.params.id)
     .then(pokemon => res.json(pokemon))
-    .catch(err => console.log(err));	
+    .catch(err => res.json(err));	
 });
 
 //UPDATE ROUTE
 router.put('/:id', function(req, res){
   Pokemon.findByIdAndUpdate(req.params.id, req.body)
-    .catch(err => console.log(err));	
+    .then((updatedPokemon)=> res.json(updatedPokemon))
+    .catch(err => res.json(err));	
 });
 
 //DELETE ROUTE
 router.delete('/:id', function(req, res){
   Pokemon.findByIdAndRemove(req.params.id)
-    .catch(err => console.log(err));	
+    .catch(err => res.json(err));	
 });
 
 
