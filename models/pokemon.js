@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var pokemonSchema = mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    lowercase: true
   },
   picture: {
     type: String,
@@ -11,14 +12,21 @@ var pokemonSchema = mongoose.Schema({
   },
   type: {
     type: String,
-    required: true
+    required: true,
+    lowercase: true
   },
   ability: String,
   weakness: [String],
   height: Number,
   evolution: {
-    id : {type: mongoose.Schema.Types.ObjectId, ref: 'Pokemon'},
-    name: String
+    id : {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Pokemon'
+    },
+    name: {
+      type: String,
+      lowercase: true
+    }
   }
 });
 

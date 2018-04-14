@@ -9,11 +9,13 @@ var checkGenderValidator = [checkGender, "character gender is neither Male nor F
 var characterSchema = mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    lowercase: true
   },
   gender: {
     type: String,
     required: true,
+    lowercase: true,
     validator: checkGenderValidator 
   },
   age: Number,
