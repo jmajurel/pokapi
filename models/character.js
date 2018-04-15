@@ -4,8 +4,6 @@ function checkGender(gender){
   return gender === "male" || gender === "female" 
 }
 
-var checkGenderValidator = [checkGender, "character gender is neither Male nor Female"];
-
 var characterSchema = mongoose.Schema({
   name: {
     type: String,
@@ -16,7 +14,7 @@ var characterSchema = mongoose.Schema({
     type: String,
     required: true,
     lowercase: true,
-    validator: checkGenderValidator 
+    validator: [checkGender, "character gender is neither Male nor Female"]
   },
   age: Number,
   ownPokemons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pokemon'}]

@@ -11,24 +11,34 @@ exports.getPokemons = function(req, res){
 };
 
 exports.createPokemon = function(req, res){
+
   var newPokemon = {
     name: req.body.name,
     type: req.body.type,
     height: req.body.height,
-    picture: req.body.picture,
-    ability: req.body.ability,
-    weakness: req.body.weakness,
-    evolution: {
-      name: req.body.evolution,
-    }
+    picture: req.body.picture
   };
-  Pokemon.findOne({name: req.body.evolution})
-  .then(function(foundPokemon) {
-    if(foundPokemon) {
-      newPokemon.evolution.id = foundPokemon._id;
-    } else {
-      console.log(`Pokemon evolution: ${req.body.evolution} is not in db`);
-    }
+
+  if(!req.body.ability) {
+    req.body.ability = "";
+  }
+  newPokemon.ability = req.body.ability.split(' ');
+
+  if(!req.body.weakness) {
+    req.body.weakness = "";
+  }
+  newPokemon.weakness = req.body.weakness.split(' ');
+
+  if(!req.body.evolutions) {
+    req.body.evolution ="";
+  }
+
+  Pokemon.find({name: {$in: req.body.evolutions.split(' ')}})
+  .then(function(foundPokemons) {
+    newPokemon.evolutions = foundPokemons.reduce((acc, item) => {
+      acc.push({id: item._id, name: item.name});
+      return acc;
+    }, []);
   })
   .then(function() {
      Pokemon.create(newPokemon)
@@ -45,9 +55,41 @@ exports.showPokemon = function (req, res){
 };
 
 exports.updatePokemon = function (req, res){
-  Pokemon.findByIdAndUpdate(req.params.id, req.body, {new: true})
-    .then(updatedPokemon => res.json(updatedPokemon))
-    .catch(err => res.send(err));	
+
+  var updatedPokemon = {
+    name: req.body.name,
+    type: req.body.type,
+    height: req.body.height,
+    picture: req.body.picture
+  };
+
+  if(!req.body.ability) {
+    req.body.ability = "";
+  }
+  updatedPokemon.ability = req.body.ability.split(' ');
+
+  if(!req.body.weakness) {
+    req.body.weakness = "";
+  }
+  updatedPokemon.weakness = req.body.weakness.split(' ');
+
+  if(!req.body.evolutions) {
+    req.body.evolution ="";
+  }
+
+  Pokemon.find({name: {$in: req.body.evolutions.split(' ')}})
+  .then(function(foundPokemons) {
+    updatedPokemon.evolutions = foundPokemons.reduce((acc, item) => {
+      acc.push({id: item._id, name: item.name});
+      return acc;
+    }, []);
+  })
+  .then(function() {
+     Pokemon.findByIdAndUpdate(req.params.id, updatedPokemon, {new: true})
+    .then(updatedPokemon=> res.status(201).json(updatedPokemon))
+    .catch(err => res.send(err));
+  })
+  .catch(err => res.send(err));
 };
 
 exports.deletePokemon = function (req, res){

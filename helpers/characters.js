@@ -17,16 +17,19 @@ exports.createCharacter = function (req, res){
     age: req.body.age
   };
 
-  if(req.body.ownPokemons){
+  if(!req.body.ownPokemons){
     req.body.ownPokemons = "";
   }
 
   Pokemon.find({name: {$in: req.body.ownPokemons.split(' ')}})
   .then(function(foundPokemons){
-    newCharacter.ownPokemons = foundPokemons;
+    newCharacter.ownPokemons = foundPokemons.reduce((acc, item) => {
+      acc.push(item._id);
+      return acc;
+    }, []);
   })
   .then(function(){
-    Character.create(newCharacter, {new: true})
+    Character.create(newCharacter)
     .then(newCharacter => res.status(201).json(newCharacter))
     .catch(err => res.send(err));
   })
@@ -40,9 +43,30 @@ exports.showCharacter = function (req, res){
 };
 
 exports.updateCharacter = function (req, res){
-  Character.findByIdAndUpdate(req.params.id, req.body, {new: true})
-    .then(updatedCharacter => res.json(updatedCharacter))
-    .catch(err => res.send(err));	
+
+  var updatedCharacter = {
+    name: req.body.name,
+    gender: req.body.gender,
+    age: req.body.age
+
+  }
+  if(!req.body.ownPokemons){
+    req.body.ownPokemons = "";
+  }
+
+  Pokemon.find({name: {$in: req.body.ownPokemons.split(' ')}})
+  .then(function(foundPokemons){
+    updatedCharacter.ownPokemons = foundPokemons.reduce((acc, item) => {
+      acc.push(item._id);
+      return acc;
+    }, []);
+  })
+  .then(() => {
+    Character.findByIdAndUpdate(req.params.id, updatedCharacter, {new: true})
+      .then(updatedCharacter => res.json(updatedCharacter))
+      .catch(err => res.send(err));	
+   })
+   .catch(err => res.send(err));
 };
 
 exports.deleteCharacter = function (req, res){
