@@ -12,27 +12,24 @@ exports.getCharacters = function (req, res){
 exports.createCharacter = function (req, res){
 
   var newCharacter = {
-    name: req.body.name.toLowerCase(),
-    gender: req.body.gender.toLowerCase(),
+    name: req.body.name,
+    gender: req.body.gender,
     age: req.body.age
   };
 
-  req.body.ownPokemons
-    .split(" ")
-    .forEach(function(pokemon){
-      Pokemon.findOne({name: pokemon})
-	.then(foundPokemon => {
-	  if(foundPokemon) {
-	    newCharacter.ownPokemons.push(foundPokemon._id);
-	  } else {
-	    console.log(`Pokemon ${newPokemon.evolution.name} is not available in the database`);
-	  }
-	})
-        .catch(err => res.send(err));
-  })
+  if(req.body.ownPokemons){
+    req.body.ownPokemons = "";
+  }
 
-  Character.create(newCharacter)
-  .then(newCharacter => res.status(201).json(newCharacter))
+  Pokemon.find({name: {$in: req.body.ownPokemons.split(' ')}})
+  .then(function(foundPokemons){
+    newCharacter.ownPokemons = foundPokemons;
+  })
+  .then(function(){
+    Character.create(newCharacter, {new: true})
+    .then(newCharacter => res.status(201).json(newCharacter))
+    .catch(err => res.send(err));
+  })
   .catch(err => res.send(err));
 };
 

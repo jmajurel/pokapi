@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 function checkGender(gender){
-  return gender.tolowercase() === "male" || gender.tolowercase() === "female" 
+  return gender === "male" || gender === "female" 
 }
 
 var checkGenderValidator = [checkGender, "character gender is neither Male nor Female"];

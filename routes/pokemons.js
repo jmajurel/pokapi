@@ -8,7 +8,8 @@ var router = express.Router();
 
 router.route('/')
   .get(helpers.getPokemons) //INDEX 
-  .post(helpers.createPokemon) //CREATE 
+  .post(dbverification.checkExistingPokemon, 
+    helpers.createPokemon) //CREATE 
 
 router.route('/:id')
   .get(helpers.showPokemon) //SHOW

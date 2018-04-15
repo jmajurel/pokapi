@@ -11,11 +11,30 @@ exports.getPokemons = function(req, res){
 };
 
 exports.createPokemon = function(req, res){
-
+  var newPokemon = {
+    name: req.body.name,
+    type: req.body.type,
+    height: req.body.height,
+    picture: req.body.picture,
+    ability: req.body.ability,
+    weakness: req.body.weakness,
+    evolution: {
+      name: req.body.evolution,
+    }
+  };
   Pokemon.findOne({name: req.body.evolution})
-  .then(foundPokemon => req.body.evolution.id = foundPokemon._id)
-  .then(() => Pokemon.create(req.body))
-  .then(newPokemon => res.status(201).json(newPokemon))
+  .then(function(foundPokemon) {
+    if(foundPokemon) {
+      newPokemon.evolution.id = foundPokemon._id;
+    } else {
+      console.log(`Pokemon evolution: ${req.body.evolution} is not in db`);
+    }
+  })
+  .then(function() {
+     Pokemon.create(newPokemon)
+    .then(newPokemon => res.status(201).json(newPokemon))
+    .catch(err => res.send(err));
+  })
   .catch(err => res.send(err));
 };
 

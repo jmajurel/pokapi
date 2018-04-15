@@ -5,23 +5,29 @@ var Pokemon = models.pokemon;
 var Character = models.character;
 
 middlewarePackage.checkExistingPokemon = function (req, res, next){
-  Pokemon.findOne({name: req.body.name.toLowerCase()}, function(err, data){
+  Pokemon.findOne({name: req.body.name}, function(err, data){
     if(err){
       res.send(err);
     } else {
-      !data ? next() : console.log("Pokemon already existing in db");
-      res.status(409).end()
+      if(!data){
+        next(); 
+      } else {
+        res.status(409).send({message: "Pokemon already existing in db"});
+      }
     }
   }); 
 }
 
 middlewarePackage.checkExistingCharacter = function (req, res, next){
-  Character.findOne({name: req.body.name.toLowerCase()}, function(err, data){
+  Character.findOne({name: req.body.name}, function(err, data){
     if(err){
       res.send(err);
     } else {
-      !data ? next() : console.log("Character already existing in db");
-      res.status(409).end()
+      if(!data){
+        next();
+      } else {
+        res.status(409).send({message: "Character already existing in db"});
+      }
     }
   }); 
 }

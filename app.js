@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 
 app.use('/api/pokemons', pokemonsRouter);
-app.use('/api/characters', pokemonsRouter);
+app.use('/api/characters', charactersRouter);
 
 app.get(/(api)?/, (req, res) => res.redirect('api/pokemons/'));
 

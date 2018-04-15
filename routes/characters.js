@@ -11,7 +11,8 @@ var router = express.Router();
 
 router.route('/')
   .get(helpers.getCharacters)     //INDEX
-  .post(helpers.createCharacter); //CREATE
+  .post(dbverification.checkExistingCharacter,
+  helpers.createCharacter); //CREATE
 
 router.route('/:id')
   .get(helpers.showCharacter)    //SHOW
