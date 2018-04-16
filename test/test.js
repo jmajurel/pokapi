@@ -11,14 +11,17 @@ describe('Pokemon', function() {
         var data = JSON.parse(body);
         assert(data.length > 0, "empty data");
         done();
-      });
+      })
+      .on('error', function(err){
+        done(err);
+      })
     });
   });
 
-  describe('#post route', function() {
+  describe('#create route', function() {
     it('should save new pokemon in db', function(done){
       var pokemon = {
-        name: 'Pikachu',
+        name: 'pikachu3',
         picture: 'https://cdn.bulbagarden.net/upload/thumb/0/0d/025Pikachu.png/250px-025Pikachu.png',
         type: 'electric',
         ability: 'static',
@@ -26,31 +29,27 @@ describe('Pokemon', function() {
         height: 2,
         evolutions: 'raichu'
       }
-      request.put({
-        uri: 'http://localhost:3000/api/pokemons/',
+      request.post({
+        uri: apirul,
         json: true,
-        form: {
-          name: 'Pikachu',
-          picture: 'https://cdn.bulbagarden.net/upload/thumb/0/0d/025Pikachu.png/250px-025Pikachu.png',
-          type: 'electric',
-          ability: 'static',
-          weakness: 'ground',
-          height: 2,
-          evolutions: 'raichu'
-        }
-      }, (err, res, body) => {
+        form: pokemon 
+        }, function(err, res, body){
         if(err) {
           console.log(err)
+          done(err);
         } else {
-          assert.strictEqual(body, pokemon);
+          assert.strictEqual(body.name, pokemon.name);
+          done();
         }
-        done();
       })
-      .on('error', (err) => {
+      .on('error', function(err){
         console.log(err)
-        done();
+        done(err);
       })
     });
   });
 
+  describe('#destroy route', function(){
+
+  });
 });
