@@ -1,4 +1,4 @@
-var models = require('../models');
+var models = require('../models/api');
 var middlewarePackage = {}
 
 var Pokemon = models.pokemon;

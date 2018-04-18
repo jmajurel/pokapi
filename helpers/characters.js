@@ -1,4 +1,4 @@
-var models = require('../models');
+var models = require('../models/api');
 
 var Character = models.character;
 var Pokemon   = models.pokemon;
