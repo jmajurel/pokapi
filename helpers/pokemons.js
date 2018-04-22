@@ -30,7 +30,7 @@ exports.createPokemon = function(req, res){
   newPokemon.weakness = req.body.weakness.split(' ');
 
   if(!req.body.evolutions) {
-    req.body.evolution ="";
+    req.body.evolutions ="";
   }
 
   Pokemon.find({name: {$in: req.body.evolutions.split(' ')}})
