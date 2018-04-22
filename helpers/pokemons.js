@@ -74,7 +74,7 @@ exports.updatePokemon = function (req, res){
   updatedPokemon.weakness = req.body.weakness.split(' ');
 
   if(!req.body.evolutions) {
-    req.body.evolution ="";
+    req.body.evolutions ="";
   }
 
   Pokemon.find({name: {$in: req.body.evolutions.split(' ')}})
